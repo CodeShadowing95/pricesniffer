@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
-import { extractCurrency, extractDescription, extractPrice } from "../utils";
+import { extractCurrency, extractDescription, extractDescription2, extractPrice } from "../utils";
 
 export async function scrapeAmazonProduct(url: string) {
     if(!url) return;
@@ -35,22 +35,19 @@ export async function scrapeAmazonProduct(url: string) {
 
         // extract the product title
         const title = $('#productTitle').text().trim();
-        const currentPrice = extractPrice(
-            $('.priceToPay span.a-price-whole'),
-            $('.a.size.base.a-color-price'),
-            $('.a-button-selected .a-color-base'),
-        );
 
-        // const originalPrice = extractPrice(
-        //     $('#priceblock_ourprice'),
-        //     $('.a-price.a-text-price span.a-offscreen'),
-        //     $('#listPrice'),
-        //     $('#priceblock_dealprice'),
-        //     $('.a-size-base.a-color-price')
-        // );
+        const cPrice = $('.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay').text().trim().split('€')[0] ||
+            $('.a-price.a-text-price.apexPriceToPay .a-offscreen').text().trim().split('€')[0];
+        const currentPrice = cPrice.split(',')[0].replace(/[^\d]/g, "");
 
-        const normalPrice = $('.aok-relative .basisPrice .a-text-price .a-offscreen').text().replace(/[^\d,]/g, "");
-        const originalPrice = normalPrice.replace(/[,]/, ".");
+        const oPrice = $('.aok-relative .basisPrice .a-text-price .a-offscreen').text() === '' ? 
+            '' : $('.aok-relative .basisPrice .a-text-price .a-offscreen').text().trim().split('€')[0] ||
+            $('table.a-lineitem .a-span12 .a-price.a-text-price.a-size-base .a-offscreen').text().trim().split('€')[0];
+        const originalPrice = oPrice.split(',')[0].replace(/[^\d]/g, "");
+
+        const dpCurrentPrice = cPrice !== '' ? Number(cPrice.split(',')[1]) : Number(oPrice.split(',')[1]);
+
+        const dpOriginalPrice = oPrice !== '' ? Number(oPrice.split(',')[1]) : Number(cPrice.split(',')[1]);
 
         const outOfStock = $('#availability span').text().trim().toLowerCase() === 'currently unavailable';
 
@@ -59,13 +56,18 @@ export async function scrapeAmazonProduct(url: string) {
 
         const currency = extractCurrency($('.a-price-symbol'));
 
-        const discountRate = $('.savingsPercentage').text().replace(/[^\d]/g, "");
+        const discountRate = $('.savingsPercentage').text().split('%')[0].trim().replace(/[^\d]/g, "");
 
-        const stars = $('a.a-declarative .a-size-base.a-color-base').text().trim();
+        const starsCount = $('span.a-declarative a.a-declarative .a-size-base.a-color-base').text().trim().split(' ')[0];
 
-        const reviewsCount = $('#acrCustomerReviewLink #acrCustomerReviewText').text().replace(/[^\d]/g, "");
+        
+        const mainDescription = $('#productDescription_expander span').text().trim();
+        const description = extractDescription2($) || extractDescription($);
+        
+        const reviewsCount = $('#acrCustomerReviewLink #acrCustomerReviewText').text().trim().split(' ')[0].replace(/[^\d]/g, "");        
 
-        const description = extractDescription($);
+        const comments = $('tr.a-histogram-row').children().prevObject?.first().text().trim().split(' ')[1].replace(/[^\d]/g, "");
+        // const comments = $('tr.a-histogram-row. td.a-text-right:first').text().replace(/[^\d]/g, "");
 
         // console.log({title, currentPrice, originalPrice, outOfStock, imageURLs, currency, discountRate});
         const data = {
@@ -73,19 +75,24 @@ export async function scrapeAmazonProduct(url: string) {
             currency: currency || '$',
             image: imageURLs[0],
             title,
-            currentPrice: Number(currentPrice) || Number(originalPrice),
-            originalPrice: Number(originalPrice) || Number(currentPrice),
+            currentPrice: currentPrice || originalPrice ? (Number(currentPrice) || Number(originalPrice)) : 0,
+            dpCurrentPrice: currentPrice ? Number(dpCurrentPrice) : 0,
+            originalPrice: currentPrice || originalPrice ? (Number(originalPrice) || Number(currentPrice)) : 0,
+            dpOriginalPrice: originalPrice ? Number(dpOriginalPrice) : 0,
             priceHistory: [],
             discountRate: Number(discountRate),
             category: 'category',
             reviewsCount: Number(reviewsCount),
-            stars: stars,
+            starsCount: starsCount,
             isOutOfStock: outOfStock,
-            description,
+            description: mainDescription ? mainDescription : description,
             lowestPrice: Number(currentPrice) || Number(originalPrice),
             highestPrice: Number(originalPrice) || Number(currentPrice),
             averagePrice: Number(originalPrice) || Number(currentPrice),
+            comments: Number(comments)
         }
+
+        // console.log(data);
 
         return data;
     } catch (error: any) {

@@ -22,8 +22,11 @@ export type PriceHistoryItem = {
     description: string;
     category: string;
     reviewsCount: number;
-    stars: number;
+    starsCount: string;
     isOutOfStock: Boolean;
+    comments: number;
+    dpCurrentPrice: number;
+    dpOriginalPrice: number;
     users?: User[];
   };
   

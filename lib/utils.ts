@@ -11,23 +11,23 @@ const THRESHOLD_PERCENTAGE = 40;
 
 // Extracts and returns the price from a list of possible elements.
 export function extractPrice(...elements: any) {
-  for (const element of elements) {
-    const priceText = element.text().trim();
-
-    if(priceText) {
-      const cleanPrice = priceText.replace(/[^\d.]/g, '');
-
-      let firstPrice; 
-
-      if (cleanPrice) {
-        firstPrice = cleanPrice.match(/\d+[.,]\d{2}/)?.[0];
-      } 
-
-      return firstPrice || cleanPrice;
+    for (const element of elements) {
+      const priceText = element.text().trim();
+  
+      if(priceText) {
+        const cleanPrice = priceText.replace(/[^\d.]/g, '');
+  
+        let firstPrice; 
+  
+        if (cleanPrice) {
+          firstPrice = cleanPrice.match(/\d+\.\d{2}/)?.[0];
+        } 
+  
+        return firstPrice || cleanPrice;
+      }
     }
-  }
-
-  return '';
+  
+    return '';
 }
 
 // Extracts and returns the currency symbol from an element.
@@ -42,6 +42,7 @@ export function extractDescription($: any) {
     const selectors = [
         "ul.a-unordered-list.a-vertical.a-spacing-mini",
         "ul.a-unordered-list.a-vertical.a-spacing-none",
+        // "ul.a-unordered-list.a-vertical.a-spacing-small",
         // ".a-expander-content p",
         // Add more selectors here if needed
     ];
@@ -57,6 +58,28 @@ export function extractDescription($: any) {
             .join("\n");
         }
     }
+    return textContent;
+}
+
+export function extractDescription2($: any) {
+    const selectors = [
+        "div.a-column.a-span4 .firstColumn .a-fixed-left-grid",
+        "div.a-column.a-span4 .unspecifiedColumn .a-fixed-left-grid",
+        "div.a-column.a-span4.a-span-last .lastColumn .a-fixed-left-grid"
+    ];
+
+    let textContent = '';
+
+    for(const selector of selectors) {
+        const elements = $(selector);
+        if(elements.length > 0) {
+            textContent += elements
+            .map((_:any, element: any) => $(element).text().trim())
+            .get()
+            .join("\n") + "\n";
+        }
+    }
+
     return textContent;
 }
 

@@ -18,6 +18,7 @@ export async function scrapeAndStoreProduct(productUrl:string) {
         if(!scrapedProduct) return;
 
         let product = scrapedProduct;
+        // console.log("Product: ", product);
 
         const existingProduct = await Product.findOne({ url: scrapedProduct.url });
 
@@ -71,5 +72,37 @@ export async function getProductById(productId: string) {
     } catch (error) {
         console.log(error);
         
+    }
+}
+
+export async function getAllProducts() {
+    try {
+        connectToDB();
+
+        const products = await Product.find();
+
+        return products;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function getSimilarProducts(productId: string) {
+    try {
+        connectToDB();
+
+        const currentProduct = await Product.findById(productId);
+
+        if(!currentProduct) return null;
+
+        /* The code is using the Mongoose library to find similar products to the current product based
+        on the provided `productId`. */
+        const similarProducts = await Product.find({
+            _id: { $ne: productId },
+        }).limit(3);
+
+        return similarProducts;
+    } catch (error) {
+        console.log(error);
     }
 }
