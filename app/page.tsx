@@ -41,9 +41,12 @@ const Home = async () => {
             <h2 className="section-text">Trending</h2>
 
             <div className="flex flex-wrap gap-x-8 gap-y-16">
-                {allProducts?.map((product) => (
-                    <ProductCard key={product._id} product={product} />
-                ))}
+                {allProducts?.length !== 0 ? 
+                    allProducts?.map((product) => (
+                        <ProductCard key={product._id} product={product} />
+                    )) :
+                    <p className="text-base text-gray-500">No saved products yet.</p>
+                }
             </div>
         </section>
     </>
