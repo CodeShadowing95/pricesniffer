@@ -190,7 +190,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                 </button>
             </div>
 
-            <div className="py-14 flex flex-col gap-2 w-full">
+            {/* <div className="py-14 flex flex-col gap-2 w-full">
                 <p className="section-text">Similar Products</p>
                 
                 {(similarProducts && similarProducts?.length > 0) ? (
@@ -204,7 +204,18 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                         <p className="text-base text-gray-500">No similar products yet.</p>
                     </div>
                 }
-            </div>
+            </div> */}
+            {similarProducts && similarProducts?.length > 0 && (
+                <div className="py-14 flex flex-col gap-2 w-full">
+                    <p className="section-text">Similar Products</p>
+
+                    <div className="flex flex-wrap gap-10 mt-7 w-full">
+                        {similarProducts.map((product) => (
+                            <ProductCard key={product._id} product={product} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
