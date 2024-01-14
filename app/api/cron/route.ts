@@ -5,6 +5,11 @@ import { scrapeAmazonProduct } from "@/lib/scraper";
 import { getAveragePrice, getEmailNotifType, getHighestPrice, getLowestPrice } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
+// Some options provided by Next.js to modify the way our API opens
+export const maxDuration = 300;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 
 export async function GET() {
     try {
@@ -38,7 +43,7 @@ export async function GET() {
                 }
 
                 const updatedProduct = await Product.findOneAndUpdate(
-                    { url: scrapedProduct.url },
+                    { url: product.url },
                     product,
                 );
 
