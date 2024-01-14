@@ -6,7 +6,7 @@ import { getAveragePrice, getEmailNotifType, getHighestPrice, getLowestPrice } f
 import { NextResponse } from "next/server";
 
 // Some options provided by Next.js to modify the way our API opens
-export const maxDuration = 5;
+export const maxDuration = 10;
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 

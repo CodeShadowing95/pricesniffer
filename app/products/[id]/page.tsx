@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import Modal from "@/components/Modal";
 import PriceInfoCard from "@/components/PriceInfoCard";
 import ProductCard from "@/components/ProductCard";
@@ -21,6 +22,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
 
     return (
         <div className="product-container">
+            <BackButton />
             <div className="flex gap-28 xl:flex-row flex-col">
                 <div className="product-image">
                     <Image
@@ -190,7 +192,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                 </button>
             </div>
 
-            {/* <div className="py-14 flex flex-col gap-2 w-full">
+            <div className="py-14 flex flex-col gap-2 w-full">
                 <p className="section-text">Similar Products</p>
                 
                 {(similarProducts && similarProducts?.length > 0) ? (
@@ -201,11 +203,11 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                     </div>
                 ) : 
                     <div className="flex mt-7 w-full">
-                        <p className="text-base text-gray-500">No similar products yet.</p>
+                        <p className="text-base text-gray-500">No similar products found yet.</p>
                     </div>
                 }
-            </div> */}
-            {similarProducts && similarProducts?.length > 0 && (
+            </div>
+            {/* {similarProducts && similarProducts?.length > 0 && (
                 <div className="py-14 flex flex-col gap-2 w-full">
                     <p className="section-text">Similar Products</p>
 
@@ -215,7 +217,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                         ))}
                     </div>
                 </div>
-            )}
+            )} */}
         </div>
     )
 }

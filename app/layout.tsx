@@ -22,6 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+        <head>
+            <link rel="shortcut icon" href="/assets/icons/logo.svg" type="image/x-icon" />
+        </head>
         <body className={inter.className}>
             <main className="max-w-10xl mx-auto">
                 <Navbar />
