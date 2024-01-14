@@ -1,5 +1,6 @@
-"use strict";
-const nodemailer = require("nodemailer");
+"use server";
+
+import nodemailer from 'nodemailer';
 
 import { EmailContent, EmailProductInfo, NotificationType } from '@/types';
 
@@ -76,32 +77,6 @@ export async function generateEmailBody(product: EmailProductInfo, type: Notific
   
     return { subject, body };
 }
-
-
-// const transporter = nodemailer.createTransport({
-//     host: "smtppro.zoho.in",
-//     port: 465,
-//     secure: true,
-//     auth: {
-//       user: "hwarblade@gmail.com",
-//       pass: process.env.USER_PASSWORD,
-//     },
-//     tls: {
-//       // do not fail on invalid certs
-//       rejectUnauthorized: false,
-//     },
-//   });
-
-// const transporter = nodemailer.createTransport({
-//     pool: true,
-//     service: 'hotmail',
-//     port: 2525,
-//     auth: {
-//         user: 'vastolorde2024@outlook.com',
-//         pass: process.env.EMAIL_PASSWORD,
-//     },
-//     maxConnections: 1
-// })
 
 const transporter = nodemailer.createTransport({
     pool: true,
